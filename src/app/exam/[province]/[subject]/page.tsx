@@ -6,7 +6,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Home, AlertCircle, ExternalLink } from 'lucide-react';
+import { ArrowLeft, Home, AlertCircle, ExternalLink, BookOpen } from 'lucide-react';
 import { provinces, subjects, googleFormLinks } from '@/data/moeys-data';
 
 export default function ExamPage() {
@@ -14,6 +14,8 @@ export default function ExamPage() {
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [iframeLoaded, setIframeLoaded] = useState(false);
+    const [iframeError, setIframeError] = useState(false);
 
     const provinceName = decodeURIComponent(params.province as string);
     const subjectName = decodeURIComponent(params.subject as string);
@@ -38,6 +40,15 @@ export default function ExamPage() {
 
         setIsLoading(false);
     }, [province, subject, googleFormLink]);
+
+    const handleIframeLoad = () => {
+        setIframeLoaded(true);
+        setIframeError(false);
+    };
+
+    const handleIframeError = () => {
+        setIframeError(true);
+    };
 
     if (isLoading) {
         return (
@@ -128,44 +139,110 @@ export default function ExamPage() {
 
             {/* Main Content - Google Form Embed */}
             <main className="flex-1 container mx-auto p-4">
-                <Card className="shadow-lg h-full">
-                    <CardHeader>
-                        <CardTitle className="text-center text-xl">
-                            ប្រឡងតេស្តតាមប្រព័ន្ធប្រឡងគម្រោង GEIP
-                        </CardTitle>
-                        <div className="text-center">
-                            <a
-                                href={googleFormLink}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="inline-flex items-center text-blue-600 hover:text-blue-800 underline"
-                            >
-                                បើកក្នុងផ្ទាំងថ្មី
-                                <ExternalLink className="ml-2 h-4 w-4" />
-                            </a>
+                <div className="max-w-6xl mx-auto">
+                    {/* Exam Header Card */}
+                    <Card className="shadow-lg mb-6 border-0 bg-gradient-to-r from-blue-50 to-indigo-50">
+                        <CardHeader className="text-center pb-4">
+                            <CardTitle className="text-2xl sm:text-3xl font-bold text-gray-800 mb-3">
+                                ប្រឡងតេស្តតាមប្រព័ន្ធប្រឡងគម្រោង GEIP
+                            </CardTitle>
+                            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                                <a
+                                    href={googleFormLink}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 shadow-md hover:shadow-lg"
+                                >
+                                    <ExternalLink className="mr-2 h-4 w-4" />
+                                    បើកក្នុងផ្ទាំងថ្មី
+                                </a>
+                                <div className="text-sm text-gray-600 bg-white px-3 py-1 rounded-full border">
+                                    ប្រឡងតេស្ត {subject.name_km}
+                                </div>
+                            </div>
+                        </CardHeader>
+                    </Card>
+
+                    {/* Main Exam Container */}
+                    <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+                        {/* Left Sidebar - Instructions & Help */}
+                        <div className="lg:col-span-1 space-y-4">
+
+                            <Card className="shadow-md border-0 bg-amber-50 border-amber-200">
+                                <CardHeader className="pb-3">
+                                    <CardTitle className="text-lg font-semibold text-amber-800 flex items-center">
+                                        <AlertCircle className="mr-2 h-5 w-5 text-amber-600" />
+                                        បើមិនអាចប្រឡងតេស្តបាន
+                                    </CardTitle>
+                                </CardHeader>
+                                <CardContent className="space-y-2">
+                                    <div className="space-y-2 text-sm text-amber-700">
+                                        <p>• ប្រើប្រាស់ប៊្រូសែរ Chrome, Firefox, ឬ Safari ថ្មីៗ</p>
+                                        <p>• ប្តូរទៅផ្ទាំងថ្មី ឬប្រើប្រាស់ឧបករណ៍ចល័ត</p>
+                                        <p>• ត្រឡប់ទៅជ្រើសរើសមុខវិជ្ជាផ្សេង</p>
+                                    </div>
+                                </CardContent>
+                            </Card>
                         </div>
-                    </CardHeader>
-                    <CardContent className="p-0">
-                        <div className="w-full h-[calc(100vh-300px)] min-h-[600px]">
-                            <iframe
-                                src={googleFormLink}
-                                width="100%"
-                                height="100%"
-                                frameBorder="0"
-                                marginHeight={0}
-                                marginWidth={0}
-                                title={`Exam for ${subject.name} in ${province.name}`}
-                                className="rounded-b-lg"
-                            >
-                                <p>Your browser does not support iframes.
-                                    <a href={googleFormLink} target="_blank" rel="noopener noreferrer">
-                                        Click here to open the exam in a new tab
-                                    </a>
-                                </p>
-                            </iframe>
+
+                        {/* Right Side - Google Form Embed */}
+                        <div className="lg:col-span-3">
+                            <Card className="shadow-lg border-0 bg-white h-full">
+                                <CardContent className="p-0">
+                                    <div className="w-full h-[calc(100vh-400px)] min-h-[600px] relative">
+                                        {/* Loading State */}
+                                        {!iframeLoaded && !iframeError && (
+                                            <div className="absolute inset-0 flex items-center justify-center bg-gray-50 rounded-lg">
+                                                <div className="text-center">
+                                                    <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mx-auto mb-4"></div>
+                                                    <p className="text-lg text-gray-600 font-medium">កំពុងផ្ទុកប្រឡងតេស្ត...</p>
+                                                    <p className="text-sm text-gray-500 mt-2">សូមរង់ចាំខ្លី</p>
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        {/* Error State */}
+                                        {iframeError && (
+                                            <div className="absolute inset-0 flex items-center justify-center bg-red-50 rounded-lg">
+                                                <div className="text-center p-6">
+                                                    <AlertCircle className="h-16 w-16 text-red-500 mx-auto mb-4" />
+                                                    <h3 className="text-xl font-semibold text-red-800 mb-2">មានបញ្ហាក្នុងការផ្ទុកប្រឡងតេស្ត</h3>
+                                                    <p className="text-red-600 mb-4">សូមព្យាយាមប្រើប្រាស់ផ្ទាំងថ្មី</p>
+                                                    <a
+                                                        href={googleFormLink}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="inline-flex items-center px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors duration-200"
+                                                    >
+                                                        <ExternalLink className="mr-2 h-4 w-4" />
+                                                        បើកក្នុងផ្ទាំងថ្មី
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        {/* Google Form Iframe */}
+                                        <iframe
+                                            src={`${googleFormLink.replace('?usp=dialog', '?embedded=true&usp=pp_url')}`}
+                                            width="100%"
+                                            height="100%"
+                                            frameBorder="0"
+                                            marginHeight={0}
+                                            marginWidth={0}
+                                            title={`Exam for ${subject.name} in ${province.name}`}
+                                            className="rounded-lg"
+                                            allow="camera; microphone; geolocation"
+                                            sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"
+                                            onLoad={handleIframeLoad}
+                                            onError={handleIframeError}
+                                            style={{ display: iframeLoaded && !iframeError ? 'block' : 'none' }}
+                                        />
+                                    </div>
+                                </CardContent>
+                            </Card>
                         </div>
-                    </CardContent>
-                </Card>
+                    </div>
+                </div>
             </main>
 
             {/* Footer */}

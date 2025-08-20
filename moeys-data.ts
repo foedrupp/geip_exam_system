@@ -6,6 +6,10 @@ export interface Province {
 export interface Subject {
   name: string;
   name_km: string;
+  duration: number; // Duration in minutes
+  duration_km: string; // Duration in Khmer
+  score: number; // Maximum score/points
+  score_km: string; // Score in Khmer
 }
 
 export const provinces: Province[] = [
@@ -37,9 +41,30 @@ export const provinces: Province[] = [
 ];
 
 export const subjects: Subject[] = [
-  { name: 'Mathematics', name_km: 'គណិតវិទ្យា' },
-  { name: 'Physics', name_km: 'រូបវិទ្យា' },
-  { name: 'Khmer Language', name_km: 'ភាសាខ្មែរ' },
+  { 
+    name: 'Mathematics', 
+    name_km: 'គណិតវិទ្យា',
+    duration: 60,
+    duration_km: '១ម៉ោង',
+    score: 100,
+    score_km: '១០០ពិន្ទុ'
+  },
+  { 
+    name: 'Khmer Language', 
+    name_km: 'ភាសាខ្មែរ',
+    duration: 60,
+    duration_km: '១ម៉ោង',
+    score: 100,
+    score_km: '១០០ពិន្ទុ'
+  },
+  { 
+    name: 'Physics', 
+    name_km: 'រូបវិទ្យា',
+    duration: 60,
+    duration_km: '១ម៉ោង',
+    score: 50,
+    score_km: '៥០ពិន្ទុ'
+  },
 ];
 
 export const googleFormLinks: Record<string, string> = {

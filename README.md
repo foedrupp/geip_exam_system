@@ -161,10 +161,7 @@ src/
 
 ## 📈 Performance
 
-- **Code Splitting**: Automatic route-based code splitting
-- **Image Optimization**: Next.js Image component with automatic optimization
-- **Font Loading**: Optimized Google Fonts loading
-- **Bundle Size**: Minimal JavaScript bundle with tree shaking
+Performance monitoring and optimization features have been removed from this application.
 
 ## 🚀 Deployment
 

@@ -7,6 +7,10 @@ export interface Province {
 export interface Subject {
   name: string;
   name_km: string;
+  duration: number; // Duration in minutes
+  duration_km: string; // Duration in Khmer
+  score: number; // Maximum score/points
+  score_km: string; // Score in Khmer
 }
 
 export const provinces: Province[] = [
@@ -38,9 +42,30 @@ export const provinces: Province[] = [
 ];
 
 export const subjects: Subject[] = [
-  { name: 'Mathematics', name_km: 'គណិតវិទ្យា' },
-  { name: 'Physics', name_km: 'រូបវិទ្យា' },
-  { name: 'Khmer Language', name_km: 'ភាសាខ្មែរ' },
+  { 
+    name: 'Mathematics', 
+    name_km: 'គណិតវិទ្យា',
+    duration: 60,
+    duration_km: '១ម៉ោង',
+    score: 100,
+    score_km: '១០០ពិន្ទុ'
+  },
+  { 
+    name: 'Khmer Language', 
+    name_km: 'ភាសាខ្មែរ',
+    duration: 60,
+    duration_km: '១ម៉ោង',
+    score: 100,
+    score_km: '១០០ពិន្ទុ'
+  },
+  { 
+    name: 'Physics', 
+    name_km: 'រូបវិទ្យា',
+    duration: 60,
+    duration_km: '១ម៉ោង',
+    score: 50,
+    score_km: '៥០ពិន្ទុ'
+  },
 ];
 
 export const googleFormLinks: Record<string, string> = {
@@ -50,10 +75,10 @@ export const googleFormLinks: Record<string, string> = {
  'Battambang-Mathematics': '',
  'Battambang-Physics': '',
  'Battambang-Khmer Language': '',
- 'Kampong Cham-Mathematics': '',
+ 'Kampong Cham-Mathematics': 'https://docs.google.com/forms/d/e/1FAIpQLSd3ftFlyFneGQineI4W9gHAoWrSbyUp28ilZe9haO34EAUzuQ/viewform?usp=dialog',
  'Kampong Cham-Physics': 'https://docs.google.com/forms/d/e/1FAIpQLSdcpotMs3kEl2rYNhGlJTM5uGeYIEAhioVg3-socPDh7KCoXw/viewform?usp=dialog',
  'Kampong Cham-Khmer Language': 'https://docs.google.com/forms/d/e/1FAIpQLSdvtYToE3-OVoAwlXdWFVwOU2NEeg4FtZ8PZMbsUwold1pIow/viewform?usp=dialog',
- 'Kampong Chhnang-Mathematics': 'https://docs.google.com/forms/d/e/1FAIpQLSd3ftFlyFneGQineI4W9gHAoWrSbyUp28ilZe9haO34EAUzuQ/viewform?usp=dialog',
+ 'Kampong Chhnang-Mathematics': '',
  'Kampong Chhnang-Physics': '',
  'Kampong Chhnang-Khmer Language': '',
  'Kampong Speu-Mathematics': 'https://docs.google.com/forms/d/e/1FAIpQLSeaPyf_R6qkvxY7vwKoyDnF69d4k_rbNCywAV6UBmUQo1fELQ/viewform?usp=dialog',
