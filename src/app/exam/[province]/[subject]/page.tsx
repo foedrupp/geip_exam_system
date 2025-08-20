@@ -80,23 +80,23 @@ export default function ExamPage() {
             <header className="bg-card border-b border-border shadow-sm">
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex items-center justify-between h-20">
-                        <div className="flex items-center space-x-4">
+                        <div className="flex items-center space-x-2 sm:space-x-4">
                             <Link href={`/subjects/${encodeURIComponent(provinceName)}`}>
-                                <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">
-                                    <ArrowLeft className="h-4 w-4 mr-2" />
-                                    ត្រឡប់
+                                <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground px-3 sm:px-4 py-2 sm:py-2 min-h-[40px] sm:min-h-[36px] text-sm sm:text-base">
+                                    <ArrowLeft className="h-4 w-4 mr-1 sm:mr-2" />
+                                    <span className="hidden sm:inline">ត្រឡប់</span>
                                 </Button>
                             </Link>
                             <Link href="/welcome">
-                                <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">
-                                    <Home className="h-4 w-4 mr-2" />
-                                    ទំព័រដើម
+                                <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground px-3 sm:px-4 py-2 sm:py-2 min-h-[40px] sm:min-h-[36px] text-sm sm:text-base">
+                                    <Home className="h-4 w-4 mr-1 sm:mr-2" />
+                                    <span className="hidden sm:inline">ទំព័រដើម</span>
                                 </Button>
                             </Link>
                         </div>
                         <div className="flex items-center justify-center">
                             <Image
-                                src="https://admin.fedrupp.org/images/1754726994.png"
+                                src="/moeys-logo.png"
                                 alt="MoEYS Logo"
                                 width={60}
                                 height={60}

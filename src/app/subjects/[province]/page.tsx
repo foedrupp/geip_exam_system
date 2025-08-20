@@ -74,23 +74,23 @@ export default function SubjectsPage() {
             <header className="bg-card border-b border-border shadow-sm">
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex items-center justify-between h-24">
-                        <div className="flex items-center space-x-4">
+                        <div className="flex items-center space-x-2 sm:space-x-4">
                             <Link href="/provinces">
-                                <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">
-                                    <ArrowLeft className="h-4 w-4 mr-2" />
-                                    ត្រឡប់
+                                <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground px-3 sm:px-4 py-2 sm:py-2 min-h-[40px] sm:min-h-[36px] text-sm sm:text-base">
+                                    <ArrowLeft className="h-4 w-4 mr-1 sm:mr-2" />
+                                    <span className="hidden sm:inline">ត្រឡប់</span>
                                 </Button>
                             </Link>
                             <Link href="/welcome">
-                                <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">
-                                    <Home className="h-4 w-4 mr-2" />
-                                    ទំព័រដើម
+                                <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground px-3 sm:px-4 py-2 sm:py-2 min-h-[40px] sm:min-h-[36px] text-sm sm:text-base">
+                                    <Home className="h-4 w-4 mr-1 sm:mr-2" />
+                                    <span className="hidden sm:inline">ទំព័រដើម</span>
                                 </Button>
                             </Link>
                         </div>
                         <div className="flex items-center justify-center">
                             <Image
-                                src="https://admin.fedrupp.org/images/1754726994.png"
+                                src="/moeys-logo.png"
                                 alt="MoEYS Logo"
                                 width={80}
                                 height={80}
@@ -124,7 +124,7 @@ export default function SubjectsPage() {
                             </p>
                         </CardHeader>
                         <CardContent>
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
                                 {subjects.map((subject) => {
                                     const linkKey = `${province.name}-${subject.name}`;
                                     const googleFormLink = googleFormLinks[linkKey];
@@ -137,21 +137,21 @@ export default function SubjectsPage() {
                                                 }`}
                                             onClick={() => hasLink && handleSubjectClick(subject.name)}
                                         >
-                                            <CardContent className="p-6 text-center">
+                                            <CardContent className="p-4 sm:p-6 text-center">
                                                 <div className="flex justify-center mb-4">
-                                                    <div className="bg-gray-100 w-20 h-20 rounded-full flex items-center justify-center">
+                                                    <div className="bg-gray-100 w-16 h-16 sm:w-20 sm:h-20 rounded-full flex items-center justify-center">
                                                         {getSubjectIcon(subject.name)}
                                                     </div>
                                                 </div>
-                                                <h3 className="text-xl font-bold text-foreground mb-2">
+                                                <h3 className="text-lg sm:text-xl font-bold text-foreground mb-2">
                                                     {subject.name_km}
                                                 </h3>
-                                                <p className="text-muted-foreground mb-4">
+                                                <p className="text-sm sm:text-base text-muted-foreground mb-4">
                                                     {subject.name}
                                                 </p>
                                                 {hasLink ? (
                                                     <Button
-                                                        className="w-full"
+                                                        className="w-full min-h-[44px] sm:min-h-[40px] text-sm sm:text-base px-4 py-2"
                                                         onClick={() => handleSubjectClick(subject.name)}
                                                         disabled={isLoading === subject.name}
                                                     >
@@ -159,13 +159,14 @@ export default function SubjectsPage() {
                                                             'កំពុងផ្ទុក...'
                                                         ) : (
                                                             <>
-                                                                ចាប់ផ្ដើមប្រឡងតេស្ត
+                                                                <span className="hidden sm:inline">ចាប់ផ្ដើមប្រឡងតេស្ត</span>
+                                                                <span className="sm:hidden">ប្រឡងតេស្ត</span>
                                                                 <ExternalLink className="ml-2 h-4 w-4" />
                                                             </>
                                                         )}
                                                     </Button>
                                                 ) : (
-                                                    <Button variant="outline" className="w-full" disabled>
+                                                    <Button variant="outline" className="w-full min-h-[44px] sm:min-h-[40px] text-sm sm:text-base px-4 py-2" disabled>
                                                         កំពុងរៀបចំ
                                                     </Button>
                                                 )}
