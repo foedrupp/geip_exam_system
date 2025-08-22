@@ -1,18 +1,33 @@
 'use client';
 
 import { useState } from 'react';
-import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { BookOpen, Globe, Award } from 'lucide-react';
+import Image from 'next/image';
 
 export default function WelcomePage() {
     const [isLoading, setIsLoading] = useState(false);
+    const [showDialog, setShowDialog] = useState(false);
 
     const handleStartExam = () => {
+        setShowDialog(true);
+    };
+
+    const handleConfirm = () => {
         setIsLoading(true);
-        // Navigate to province selection
         window.location.href = '/provinces';
     };
 
@@ -94,6 +109,26 @@ export default function WelcomePage() {
                                     {isLoading ? 'កំពុងផ្ទុក...' : 'ចាប់ផ្ដើមប្រឡងតេស្ត'}
                                 </Button>
                             </div>
+
+                            <AlertDialog open={showDialog} onOpenChange={setShowDialog}>
+                                <AlertDialogContent>
+                                    <AlertDialogHeader>
+                                        <div className="flex items-center justify-center mb-2">
+                                            <Image src="/moeys-logo.png" alt="MoEYS Logo" width={64} height={64} className="h-16 w-16" />
+                                        </div>
+                                        <AlertDialogTitle className="font-khmer">សូមសិស្សានុសិស្សត្រៀមគណនី Gmail មុនចាប់ផ្ដើម</AlertDialogTitle>
+                                        <AlertDialogDescription className="font-khmer leading-7">
+                                            ដើម្បីចូលរួមប្រឡងតេស្ត ត្រូវការ<strong> គណនី Gmail </strong>ដើម្បីភ្ជាប់ទៅតាមប្រព័ន្ធប្រឡងនៅពេលដែលចាប់ផ្ដើម។
+                                            <br />
+                                            សូមធ្វើការចូលគណនី Gmail នៅក្នុង ការប្រឡងនៅពេលបន្តិចទៀតនេះ
+                                        </AlertDialogDescription>
+                                    </AlertDialogHeader>
+                                    <AlertDialogFooter>
+                                        <AlertDialogCancel className="font-khmer">បោះបង់</AlertDialogCancel>
+                                        <AlertDialogAction onClick={handleConfirm} className="font-khmer">បន្ត</AlertDialogAction>
+                                    </AlertDialogFooter>
+                                </AlertDialogContent>
+                            </AlertDialog>
 
                             {/* Instructions */}
                             <div className="bg-gray-50 rounded-lg p-4 sm:p-6">

@@ -42,40 +42,34 @@ const SubjectCard: React.FC<SubjectCardProps> = ({
             {showDetails && (
                 <CardContent className="pt-0">
                     <div className="space-y-3">
-                        {/* Duration */}
+                        {/* Duration (Khmer) */}
                         <div className="flex items-center gap-2">
                             <Clock className="h-4 w-4 text-green-600" />
                             <div className="flex flex-col sm:flex-row sm:items-center sm:gap-2">
-                                <Badge variant="outline" className="text-green-700 border-green-300">
-                                    {formatDuration.toEnglish(subject.duration)}
-                                </Badge>
-                                <span className="text-sm text-gray-600 dark:text-gray-400 font-khmer">
+                                <Badge variant="outline" className="text-green-700 border-green-300 font-khmer">
                                     {subject.duration_km}
-                                </span>
+                                </Badge>
                             </div>
                         </div>
 
-                        {/* Score */}
+                        {/* Score (Khmer) */}
                         <div className="flex items-center gap-2">
                             <Trophy className="h-4 w-4 text-yellow-600" />
                             <div className="flex flex-col sm:flex-row sm:items-center sm:gap-2">
-                                <Badge variant="outline" className="text-yellow-700 border-yellow-300">
-                                    {formatScore.toEnglish(subject.score)}
-                                </Badge>
-                                <span className="text-sm text-gray-600 dark:text-gray-400 font-khmer">
+                                <Badge variant="outline" className="text-yellow-700 border-yellow-300 font-khmer">
                                     {subject.score_km}
-                                </span>
+                                </Badge>
                             </div>
                         </div>
 
                         {/* Quick Stats */}
                         <div className="pt-2 border-t border-gray-200 dark:border-gray-700">
-                            <div className="grid grid-cols-2 gap-2 text-xs text-gray-500 dark:text-gray-400">
+                            <div className="grid grid-cols-2 gap-2 text-xs text-gray-500 dark:text-gray-400 font-khmer">
                                 <div>
-                                    <span className="font-medium">Duration:</span> {subject.duration}min
+                                    <span className="font-medium">រយៈពេល:</span> {subject.duration_km}
                                 </div>
                                 <div>
-                                    <span className="font-medium">Max Score:</span> {subject.score}pts
+                                    <span className="font-medium">ពិន្ទុអតិបរមា:</span> {subject.score_km}
                                 </div>
                             </div>
                         </div>
@@ -112,13 +106,13 @@ export const SubjectCardCompact: React.FC<SubjectCardProps> = ({
                     </div>
 
                     <div className="flex items-center gap-2">
-                        <Badge variant="secondary" className="text-xs">
+                        <Badge variant="secondary" className="text-xs font-khmer">
                             <Clock className="h-3 w-3 mr-1" />
-                            {subject.duration}min
+                            {subject.duration_km}
                         </Badge>
-                        <Badge variant="secondary" className="text-xs">
+                        <Badge variant="secondary" className="text-xs font-khmer">
                             <Trophy className="h-3 w-3 mr-1" />
-                            {subject.score}pts
+                            {subject.score_km}
                         </Badge>
                     </div>
                 </div>

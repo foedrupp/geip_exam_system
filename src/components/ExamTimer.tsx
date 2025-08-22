@@ -44,7 +44,7 @@ const ExamTimer: React.FC<ExamTimerProps> = ({
             }
 
             // Check if time is up
-            if (updatedSession.isExpired && session.isActive) {
+            if (updatedSession.timeRemaining <= 0 && session.isActive) {
                 onTimeUp?.();
             }
         }, 1000);
@@ -56,7 +56,7 @@ const ExamTimer: React.FC<ExamTimerProps> = ({
     const progressPercentage = ((session.duration - session.timeRemaining) / session.duration) * 100;
 
     const getTimerStatus = () => {
-        if (session.isExpired) {
+        if (session.timeRemaining <= 0) {
             return {
                 icon: <XCircle className="h-5 w-5" />,
                 color: 'text-red-600',
@@ -100,17 +100,14 @@ const ExamTimer: React.FC<ExamTimerProps> = ({
                                 {status.icon}
                             </div>
                             <div>
-                                <div className="text-sm font-medium text-gray-700">
-                                    {status.message}
-                                </div>
-                                <div className="text-xs text-gray-600 font-khmer">
+                                <div className="text-sm font-medium text-gray-700 font-khmer">
                                     {status.message_km}
                                 </div>
                             </div>
                         </div>
 
-                        <Badge variant={status.badgeVariant} className="text-lg font-mono px-3 py-1">
-                            {timeDisplay.display}
+                        <Badge variant={status.badgeVariant} className="text-lg font-khmer px-3 py-1">
+                            {timeDisplay.display_km}
                         </Badge>
                     </div>
 
@@ -129,9 +126,9 @@ const ExamTimer: React.FC<ExamTimerProps> = ({
                                 className="h-2"
                             />
                             <div className="flex justify-between text-xs text-gray-600">
-                                <span>Started</span>
-                                <span>{Math.round(progressPercentage)}% elapsed</span>
-                                <span>Time up</span>
+                                <span>ចាប់ផ្ដើម</span>
+                                <span>{Math.round(progressPercentage)}%</span>
+                                <span>អស់ពេល</span>
                             </div>
                         </div>
                     )}
@@ -140,16 +137,16 @@ const ExamTimer: React.FC<ExamTimerProps> = ({
                     <div className="mt-3 pt-3 border-t border-gray-200">
                         <div className="text-xs text-gray-600 space-y-1">
                             <div className="flex justify-between">
-                                <span>Subject:</span>
-                                <span className="font-medium">{subject.name}</span>
+                                <span>មុខវិជ្ជា:</span>
+                                <span className="font-medium">{subject.name_km}</span>
+                            </div>
+                            <div className="flex justify_between">
+                                <span>រយៈពេល:</span>
+                                <span className="font-medium">{subject.duration_km}</span>
                             </div>
                             <div className="flex justify-between">
-                                <span>Duration:</span>
-                                <span className="font-medium">{subject.duration} minutes</span>
-                            </div>
-                            <div className="flex justify-between">
-                                <span>Max Score:</span>
-                                <span className="font-medium">{subject.score} points</span>
+                                <span>ពិន្ទុអតិបរមា:</span>
+                                <span className="font-medium">{subject.score_km}</span>
                             </div>
                         </div>
                     </div>
@@ -157,12 +154,12 @@ const ExamTimer: React.FC<ExamTimerProps> = ({
             </Card>
 
             {/* Time warning alert */}
-            {timeDisplay.isUrgent && !session.isExpired && (
+            {timeDisplay.isUrgent && session.timeRemaining > 0 && (
                 <Alert className="mt-4 border-orange-200 bg-orange-50">
                     <AlertTriangle className="h-4 w-4 text-orange-600" />
                     <AlertDescription className="text-orange-800">
                         <div className="space-y-1">
-                            <div>⚠️ Only {session.timeRemaining} minutes remaining!</div>
+                            <div>⚠️ នៅសល់តែ {timeDisplay.display_km} ប៉ុណ្ណោះ!</div>
                             <div className="text-sm font-khmer">⚠️ នៅសល់តែ {timeDisplay.display_km} ប៉ុណ្ណោះ!</div>
                         </div>
                     </AlertDescription>
@@ -170,12 +167,12 @@ const ExamTimer: React.FC<ExamTimerProps> = ({
             )}
 
             {/* Time expired alert */}
-            {session.isExpired && (
+            {session.timeRemaining <= 0 && (
                 <Alert className="mt-4 border-red-200 bg-red-50">
                     <XCircle className="h-4 w-4 text-red-600" />
                     <AlertDescription className="text-red-800">
                         <div className="space-y-1">
-                            <div>⏰ Time has expired! Please submit your exam.</div>
+                            <div>⏰ អស់ពេលហើយ! សូមដាក់ស្នើរបាយការណ៍ប្រលង។</div>
                             <div className="text-sm font-khmer">⏰ អស់ពេលហើយ! សូមដាក់ស្នើរបាយការណ៍ប្រលង។</div>
                         </div>
                     </AlertDescription>
@@ -202,7 +199,7 @@ export const ExamTimerCompact: React.FC<ExamTimerProps> = ({
             const updatedSession = examSession.updateSession(session);
             setSession(updatedSession);
 
-            if (updatedSession.isExpired && session.isActive) {
+            if (updatedSession.timeRemaining <= 0 && session.isActive) {
                 onTimeUp?.();
             }
 
@@ -215,13 +212,13 @@ export const ExamTimerCompact: React.FC<ExamTimerProps> = ({
     }, [session, onTimeUp, onTimeWarning]);
 
     const timeDisplay = examSession.formatTimeRemaining(session.timeRemaining);
-    const status = session.isExpired ? 'destructive' : timeDisplay.isUrgent ? 'destructive' : 'secondary';
+    const status = session.timeRemaining <= 0 ? 'destructive' : timeDisplay.isUrgent ? 'destructive' : 'secondary';
 
     return (
         <div className={`flex items-center gap-2 ${className}`}>
-            <Clock className={`h-4 w-4 ${session.isExpired ? 'text-red-600' : timeDisplay.isUrgent ? 'text-orange-600' : 'text-green-600'}`} />
-            <Badge variant={status} className="font-mono">
-                {timeDisplay.display}
+            <Clock className={`h-4 w-4 ${session.timeRemaining <= 0 ? 'text-red-600' : timeDisplay.isUrgent ? 'text-orange-600' : 'text-green-600'}`} />
+            <Badge variant={status} className="font-khmer">
+                {timeDisplay.display_km}
             </Badge>
         </div>
     );

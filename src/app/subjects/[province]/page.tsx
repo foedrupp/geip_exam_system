@@ -6,7 +6,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Home, Calculator, Atom, BookOpen, ExternalLink } from 'lucide-react';
+import { ArrowLeft, Home, Calculator, Atom, BookOpen, ExternalLink, Clock, Trophy } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
 import { provinces, subjects, googleFormLinks } from '@/data/moeys-data';
 
 export default function SubjectsPage() {
@@ -149,6 +150,14 @@ export default function SubjectsPage() {
                                                 <p className="text-sm sm:text-base text-muted-foreground mb-4">
                                                     {subject.name}
                                                 </p>
+                                                <div className="flex items-center justify-center gap-2 mb-4">
+                                                    <Badge variant="outline" className="text-xs">
+                                                        <Clock className="h-3 w-3 mr-1" /> {subject.duration_km}
+                                                    </Badge>
+                                                    <Badge variant="outline" className="text-xs">
+                                                        <Trophy className="h-3 w-3 mr-1" /> {subject.score_km}
+                                                    </Badge>
+                                                </div>
                                                 {hasLink ? (
                                                     <Button
                                                         className="w-full min-h-[44px] sm:min-h-[40px] text-sm sm:text-base px-4 py-2"

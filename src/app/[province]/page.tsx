@@ -79,8 +79,8 @@ export default function ProvincePage({ params }: { params: { province: string } 
                                                     <Icon className="h-12 w-12 mb-2 text-primary transition-transform duration-300 group-hover:scale-110" />
                                                     <span className="font-semibold text-lg font-body">{subject.name_km}</span>
                                                     <span className="text-sm text-muted-foreground font-body">{subject.name}</span>
-                                                    <div className="absolute bottom-3 right-3 flex items-center text-xs text-primary transition-opacity duration-300 opacity-0 group-hover:opacity-100">
-                                                        <span>Take Test</span>
+                                                    <div className="absolute bottom-3 right-3 flex items-center text-xs text-primary transition-opacity duration-300 opacity-0 group-hover:opacity-100 font-khmer">
+                                                        <span>ចូលរួមប្រឡង</span>
                                                         <ArrowRight className="h-3 w-3 ml-1" />
                                                     </div>
                                                 </Link>

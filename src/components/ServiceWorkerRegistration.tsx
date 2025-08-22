@@ -4,6 +4,22 @@ import { useEffect } from 'react';
 
 const ServiceWorkerRegistration: React.FC = () => {
     useEffect(() => {
+        // Unregister and clear caches in development to avoid stale chunk caching
+        if (
+            typeof window !== 'undefined' &&
+            'serviceWorker' in navigator &&
+            process.env.NODE_ENV !== 'production' &&
+            process.env.NEXT_PUBLIC_SERVICE_WORKER !== 'true'
+        ) {
+            navigator.serviceWorker.getRegistrations().then((registrations) => {
+                registrations.forEach((registration) => registration.unregister());
+            });
+            if ('caches' in window) {
+                caches.keys().then((keys) => keys.forEach((key) => caches.delete(key)));
+            }
+            return;
+        }
+
         // Only register service worker in production or when explicitly enabled
         if (
             typeof window !== 'undefined' &&

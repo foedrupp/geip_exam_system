@@ -1,12 +1,14 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Home, AlertCircle, ExternalLink, BookOpen } from 'lucide-react';
+import { ArrowLeft, Home, AlertCircle, ExternalLink, BookOpen, ZoomIn, ZoomOut, Maximize2, Minimize2, RotateCw } from 'lucide-react';
+import ExamTimer, { ExamTimerCompact } from '@/components/ExamTimer';
+import { Badge } from '@/components/ui/badge';
 import { provinces, subjects, googleFormLinks } from '@/data/moeys-data';
 
 export default function ExamPage() {
@@ -16,6 +18,9 @@ export default function ExamPage() {
     const [error, setError] = useState<string | null>(null);
     const [iframeLoaded, setIframeLoaded] = useState(false);
     const [iframeError, setIframeError] = useState(false);
+    const [zoomLevel, setZoomLevel] = useState(1);
+    const [isFullscreen, setIsFullscreen] = useState(false);
+    const containerRef = useRef<HTMLDivElement | null>(null);
 
     const provinceName = decodeURIComponent(params.province as string);
     const subjectName = decodeURIComponent(params.subject as string);
@@ -24,22 +29,25 @@ export default function ExamPage() {
     const subject = subjects.find(s => s.name === subjectName);
     const linkKey = `${provinceName}-${subjectName}`;
     const googleFormLink = googleFormLinks[linkKey];
+    const baseEmbedUrl = useMemo(() => googleFormLink?.replace('?usp=dialog', '?embedded=true&usp=pp_url') || '', [googleFormLink]);
+    const [iframeSrc, setIframeSrc] = useState(baseEmbedUrl);
 
     useEffect(() => {
         if (!province || !subject) {
-            setError('Invalid province or subject');
+            setError('ខេត្ត ឬ មុខវិជ្ជា មិនត្រឹមត្រូវ');
             setIsLoading(false);
             return;
         }
 
         if (!googleFormLink) {
-            setError('Google Form link is not available yet. Please contact administrator.');
+            setError('តំណភ្ជាប់ទម្រង់ Google មិនទាន់មានទេ។ សូមទាក់ទងអ្នកគ្រប់គ្រង។');
             setIsLoading(false);
             return;
         }
 
         setIsLoading(false);
-    }, [province, subject, googleFormLink]);
+        setIframeSrc(baseEmbedUrl);
+    }, [province, subject, googleFormLink, baseEmbedUrl]);
 
     const handleIframeLoad = () => {
         setIframeLoaded(true);
@@ -48,6 +56,34 @@ export default function ExamPage() {
 
     const handleIframeError = () => {
         setIframeError(true);
+    };
+
+    const handleZoomIn = () => setZoomLevel((z) => Math.min(1.5, parseFloat((z + 0.1).toFixed(2))));
+    const handleZoomOut = () => setZoomLevel((z) => Math.max(0.8, parseFloat((z - 0.1).toFixed(2))));
+    const handleZoomReset = () => setZoomLevel(1);
+
+    const handleReload = () => {
+        setIframeLoaded(false);
+        const ts = Date.now();
+        setIframeSrc(`${baseEmbedUrl}${baseEmbedUrl.includes('?') ? '&' : '?'}ts=${ts}`);
+    };
+
+    const toggleFullscreen = async () => {
+        const node = containerRef.current;
+        if (!node) return;
+        try {
+            if (!document.fullscreenElement) {
+                await node.requestFullscreen();
+                setIsFullscreen(true);
+            } else {
+                await document.exitFullscreen();
+                setIsFullscreen(false);
+            }
+        } catch { }
+    };
+
+    const openInNewTab = () => {
+        if (googleFormLink) window.open(googleFormLink, '_blank', 'noopener,noreferrer');
     };
 
     if (isLoading) {
@@ -70,7 +106,7 @@ export default function ExamPage() {
                         <CardTitle className="text-xl text-red-600">មានបញ្ហា</CardTitle>
                     </CardHeader>
                     <CardContent className="text-center">
-                        <p className="text-muted-foreground mb-6">{error || 'Google Form link is not available'}</p>
+                        <p className="text-muted-foreground mb-6 font-khmer">{error || 'តំណភ្ជាប់ទម្រង់ Google មិនទាន់មានទេ'}</p>
                         <div className="space-y-3">
                             <Link href={`/subjects/${encodeURIComponent(provinceName)}`}>
                                 <Button className="w-full">ត្រឡប់ទៅជ្រើសរើសមុខវិជ្ជា</Button>
@@ -108,14 +144,18 @@ export default function ExamPage() {
                         <div className="flex items-center justify-center">
                             <Image
                                 src="/moeys-logo.png"
-                                alt="MoEYS Logo"
+                                alt="និមិត្តសញ្ញា ក្រសួងអប់រំ"
                                 width={60}
                                 height={60}
                                 className="h-15 w-auto"
                                 priority
                             />
                         </div>
-                        <div className="w-32"></div> {/* Spacer for centering */}
+                        <div className="hidden sm:flex items-center justify-end w-48">
+                            {subject && (
+                                <ExamTimerCompact subject={subject} className="mr-2" />
+                            )}
+                        </div>
                     </div>
                 </div>
             </header>
@@ -124,8 +164,11 @@ export default function ExamPage() {
             <div className="bg-blue-50 border-b border-blue-200">
                 <div className="container mx-auto px-4 py-4">
                     <div className="text-center">
-                        <h1 className="text-2xl font-bold text-blue-900 mb-2">
-                            ប្រឡងតេស្ត {subject.name_km}
+                        <h1 className="text-2xl font-bold text-blue-900 mb-2 flex items-center justify-center gap-3">
+                            <span>ប្រឡងតេស្ត {subject.name_km}</span>
+                            <Badge variant="secondary" className="text-sm">
+                                ពិន្ទុអតិបរមា: {subject.score_km}
+                            </Badge>
                         </h1>
                         <p className="text-blue-700">
                             ខេត្ត: {province.name_km} ({province.name})
@@ -165,8 +208,17 @@ export default function ExamPage() {
 
                     {/* Main Exam Container */}
                     <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-                        {/* Left Sidebar - Instructions & Help */}
+                        {/* Left Sidebar - Timer, Instructions & Help */}
                         <div className="lg:col-span-1 space-y-4">
+                            {/* Exam Timer */}
+                            {subject && (
+                                <ExamTimer
+                                    subject={subject}
+                                    onTimeUp={() => {
+                                        // Optionally handle time up (e.g., notify user)
+                                    }}
+                                />
+                            )}
 
                             <Card className="shadow-md border-0 bg-amber-50 border-amber-200">
                                 <CardHeader className="pb-3">
@@ -178,6 +230,8 @@ export default function ExamPage() {
                                 <CardContent className="space-y-2">
                                     <div className="space-y-2 text-sm text-amber-700">
                                         <p>• ប្រើប្រាស់ប៊្រូសែរ Chrome, Firefox, ឬ Safari ថ្មីៗ</p>
+                                        <p>• ចូលគណនី Gmail ក្នុងកម្មវិធីរុករកនេះមុនពេលប្រឡង</p>
+                                        <p>• ប្រសិនបើ Google ស្នើចូលគណនីក្នុងផ្ទាំងថ្មី សូមចុច “បើកក្នុងផ្ទាំងថ្មី” ខាងលើ</p>
                                         <p>• ប្តូរទៅផ្ទាំងថ្មី ឬប្រើប្រាស់ឧបករណ៍ចល័ត</p>
                                         <p>• ត្រឡប់ទៅជ្រើសរើសមុខវិជ្ជាផ្សេង</p>
                                     </div>
@@ -189,7 +243,34 @@ export default function ExamPage() {
                         <div className="lg:col-span-3">
                             <Card className="shadow-lg border-0 bg-white h-full">
                                 <CardContent className="p-0">
-                                    <div className="w-full h-[calc(100vh-400px)] min-h-[600px] relative">
+                                    {/* Toolbar */}
+                                    <div className="flex items-center justify-between px-3 py-2 border-b bg-gray-50">
+                                        <div className="text-sm text-gray-600 font-khmer">
+                                            ប្រសិនបើអក្សរតូច សូមពង្រីក ឬបើកក្នុងផ្ទាំងថ្មី
+                                        </div>
+                                        <div className="flex items-center gap-1">
+                                            <Button variant="outline" size="sm" onClick={handleZoomOut} title="បង្រួម">
+                                                <ZoomOut className="h-4 w-4" />
+                                            </Button>
+                                            <Button variant="outline" size="sm" onClick={handleZoomReset} title="កំណត់ឡើងវិញ">
+                                                {Math.round(zoomLevel * 100)}%
+                                            </Button>
+                                            <Button variant="outline" size="sm" onClick={handleZoomIn} title="ពង្រីក">
+                                                <ZoomIn className="h-4 w-4" />
+                                            </Button>
+                                            <Button variant="outline" size="sm" onClick={handleReload} title="ផ្ទុកឡើងវិញ">
+                                                <RotateCw className="h-4 w-4" />
+                                            </Button>
+                                            <Button variant="outline" size="sm" onClick={toggleFullscreen} title="ពេញអេក្រង់">
+                                                {isFullscreen ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
+                                            </Button>
+                                            <Button variant="default" size="sm" onClick={openInNewTab} title="បើកក្នុងផ្ទាំងថ្មី">
+                                                <ExternalLink className="h-4 w-4" />
+                                            </Button>
+                                        </div>
+                                    </div>
+
+                                    <div ref={containerRef} className="w-full h-[calc(100vh-450px)] min-h-[600px] relative bg-white">
                                         {/* Loading State */}
                                         {!iframeLoaded && !iframeError && (
                                             <div className="absolute inset-0 flex items-center justify-center bg-gray-50 rounded-lg">
@@ -223,19 +304,26 @@ export default function ExamPage() {
 
                                         {/* Google Form Iframe */}
                                         <iframe
-                                            src={`${googleFormLink.replace('?usp=dialog', '?embedded=true&usp=pp_url')}`}
+                                            src={iframeSrc}
                                             width="100%"
                                             height="100%"
                                             frameBorder="0"
                                             marginHeight={0}
                                             marginWidth={0}
-                                            title={`Exam for ${subject.name} in ${province.name}`}
-                                            className="rounded-lg"
-                                            allow="camera; microphone; geolocation"
+                                            title={`ប្រឡង ${subject.name_km} នៅ ${province.name_km}`}
+                                            className="rounded-none"
+                                            allow="camera; microphone; geolocation; clipboard-read; clipboard-write; fullscreen; web-share"
                                             sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"
+                                            referrerPolicy="strict-origin-when-cross-origin"
                                             onLoad={handleIframeLoad}
                                             onError={handleIframeError}
-                                            style={{ display: iframeLoaded && !iframeError ? 'block' : 'none' }}
+                                            style={{
+                                                display: iframeLoaded && !iframeError ? 'block' : 'none',
+                                                transform: `scale(${zoomLevel})`,
+                                                transformOrigin: 'top left',
+                                                width: `${100 / zoomLevel}%`,
+                                                height: `${100 / zoomLevel}%`,
+                                            }}
                                         />
                                     </div>
                                 </CardContent>
@@ -247,8 +335,8 @@ export default function ExamPage() {
 
             {/* Footer */}
             <footer className="py-4 text-center bg-gray-50 border-t">
-                <p className="text-sm text-muted-foreground">
-                    &copy; {new Date().getFullYear()} MoEYS EdTech. All rights reserved.
+                <p className="text-sm text-muted-foreground font-khmer">
+                    &copy; {new Date().getFullYear()} MoEYS EdTech. រក្សាសិទ្ធិគ្រប់យ៉ាង។
                 </p>
             </footer>
         </div>
