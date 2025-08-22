@@ -35,7 +35,7 @@ export default function WelcomePage() {
         <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
             <div className="container mx-auto px-4 py-8">
                 {/* Header */}
-                <header className="text-center mb-8 sm:mb-12">
+                <header className="text-center mb-6 sm:mb-10">
                     <div className="flex justify-center mb-6">
                         <div className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2 sm:py-3 bg-white/80 backdrop-blur-sm rounded-2xl shadow-md ring-1 ring-gray-200">
                             <div className="rounded-xl bg-blue-50 p-2 sm:p-3 ring-1 ring-blue-100">
@@ -53,7 +53,7 @@ export default function WelcomePage() {
                             </div>
                         </div>
                     </div>
-                    <h1 className="text-2xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-4 leading-tight">
+                    <h1 className="text-2xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-3 leading-tight">
                         ប្រឡងតេស្តស្ដង់ដារ MoEYS EdTech
                     </h1>
                     <p className="text-base sm:text-lg md:text-xl text-gray-600 max-w-2xl mx-auto">
@@ -65,7 +65,7 @@ export default function WelcomePage() {
                 <div className="max-w-4xl mx-auto">
                     <Card className="shadow-xl border-0 bg-white/80 backdrop-blur-sm">
                         <CardHeader className="text-center pb-6 sm:pb-8">
-                            <CardTitle className="text-2xl sm:text-3xl font-bold text-gray-800 mb-3 sm:mb-4">
+                            <CardTitle className="text-2xl sm:text-3xl font-bold text-gray-800 mb-2 sm:mb-3">
                                 ស្វាគមន៍មកកាន់ប្រព័ន្ធប្រឡងតេស្តស្តង់ដារថ្នាក់ទី ៨
                             </CardTitle>
                             <p className="text-base sm:text-lg text-gray-600">
@@ -74,7 +74,7 @@ export default function WelcomePage() {
                         </CardHeader>
                         <CardContent className="space-y-6 sm:space-y-8">
                             {/* Features */}
-                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8">
+                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-6 mb-5 sm:mb-8">
                                 <div className="text-center">
                                     <div className="bg-blue-100 w-12 h-12 sm:w-16 sm:h-16 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
                                         <Globe className="w-6 h-6 sm:w-8 sm:h-8 text-blue-600" />
@@ -104,7 +104,7 @@ export default function WelcomePage() {
                                     onClick={handleStartExam}
                                     disabled={isLoading}
                                     size="lg"
-                                    className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-6 sm:px-12 py-4 sm:py-6 text-lg sm:text-xl font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 w-full sm:w-auto min-h-[56px] sm:min-h-[72px]"
+                                    className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-6 sm:px-12 py-5 sm:py-6 text-xl sm:text-xl font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 w-full sm:w-auto min-h-[60px] sm:min-h-[72px]"
                                 >
                                     {isLoading ? 'កំពុងផ្ទុក...' : 'ចាប់ផ្ដើមប្រឡងតេស្ត'}
                                 </Button>

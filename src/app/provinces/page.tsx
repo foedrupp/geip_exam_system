@@ -21,8 +21,7 @@ export default function ProvincesPage() {
         return provinces.filter(
             (province) =>
                 province.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                province.name_km.includes(searchQuery) ||
-                province.id.toString().includes(searchQuery)
+                province.name_km.includes(searchQuery)
         );
     }, [searchQuery]);
 
@@ -89,7 +88,7 @@ export default function ProvincesPage() {
                         <CardContent>
                             <ScrollArea className="h-[calc(100dvh-22rem)]">
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-                                    {filteredProvinces.map((province) => (
+                                    {filteredProvinces.map((province, index) => (
                                         <Button
                                             key={province.name}
                                             asChild
@@ -100,7 +99,7 @@ export default function ProvincesPage() {
                                             <Link href={`/subjects/${encodeURIComponent(province.name)}`}>
                                                 <div className="flex items-center w-full">
                                                     <div className="bg-primary text-primary-foreground rounded-full w-6 h-6 sm:w-8 sm:h-8 flex items-center justify-center text-xs sm:text-sm font-bold mr-2 sm:mr-3 flex-shrink-0">
-                                                        {province.id}
+                                                        {index + 1}
                                                     </div>
                                                     <div className="flex-1 text-left">
                                                         <div className="font-body font-bold text-base sm:text-lg">{province.name_km}</div>

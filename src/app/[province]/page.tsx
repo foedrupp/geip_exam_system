@@ -56,7 +56,7 @@ export default function ProvincePage({ params }: { params: { province: string } 
                     <Card className="shadow-lg">
                         <CardHeader>
                             <CardTitle className="font-headline text-primary text-center text-2xl">មុខវិជ្ជាសម្រាប់ប្រឡង</CardTitle>
-                            <CardDescription className="text-center text-lg">
+                            <CardDescription className="text-center text-base sm:text-lg">
                                 សម្រាប់ {selectedProvince.name_km} {selectedDate ? ` - ${selectedDate}` : ''}
                             </CardDescription>
                         </CardHeader>
@@ -73,7 +73,7 @@ export default function ProvincePage({ params }: { params: { province: string } 
                                                 asChild
                                                 size="lg"
                                                 variant="outline"
-                                                className="flex-col h-40 p-6 justify-center items-center gap-2 text-center transition-all duration-300 ease-in-out transform hover:-translate-y-1 hover:shadow-xl hover:bg-primary/10 border-2 border-primary/20 w-full"
+                                                className="flex-col h-36 sm:h-40 p-5 sm:p-6 justify-center items-center gap-2 text-center transition-all duration-300 ease-in-out transform hover:-translate-y-1 hover:shadow-xl hover:bg-primary/10 border-2 border-primary/20 w-full"
                                             >
                                                 <Link href={formLink} target="_blank" rel="noopener noreferrer">
                                                     <Icon className="h-12 w-12 mb-2 text-primary transition-transform duration-300 group-hover:scale-110" />

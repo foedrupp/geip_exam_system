@@ -6,7 +6,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Home, AlertCircle, ExternalLink, BookOpen, ZoomIn, ZoomOut, Maximize2, Minimize2, RotateCw } from 'lucide-react';
+import { ArrowLeft, Home, AlertCircle, ExternalLink, BookOpen, ZoomIn, ZoomOut, Maximize2, Minimize2, RotateCw, ArrowUpDown } from 'lucide-react';
 import ExamTimer, { ExamTimerCompact } from '@/components/ExamTimer';
 import { Badge } from '@/components/ui/badge';
 import { provinces, subjects, googleFormLinks } from '@/data/moeys-data';
@@ -20,6 +20,7 @@ export default function ExamPage() {
     const [iframeError, setIframeError] = useState(false);
     const [zoomLevel, setZoomLevel] = useState(1);
     const [isFullscreen, setIsFullscreen] = useState(false);
+    const [isTall, setIsTall] = useState(false);
     const containerRef = useRef<HTMLDivElement | null>(null);
 
     const provinceName = decodeURIComponent(params.province as string);
@@ -86,6 +87,8 @@ export default function ExamPage() {
         if (googleFormLink) window.open(googleFormLink, '_blank', 'noopener,noreferrer');
     };
 
+    const containerStyle = useMemo(() => ({ height: isTall ? '150dvh' : 'calc(100dvh - 200px)' }), [isTall]);
+
     if (isLoading) {
         return (
             <div className="min-h-screen flex items-center justify-center">
@@ -121,10 +124,38 @@ export default function ExamPage() {
         );
     }
 
+    // Gate access by passcode set in subjects page
+    try {
+        const key = `exam_pass_${provinceName}_${subjectName}`;
+        if (typeof window !== 'undefined' && !localStorage.getItem(key)) {
+            return (
+                <div className="min-h-screen flex items-center justify-center">
+                    <Card className="max-w-md mx-4">
+                        <CardHeader className="text-center">
+                            <AlertCircle className="h-16 w-16 text-amber-500 mx-auto mb-4" />
+                            <CardTitle className="text-xl text-amber-700 font-khmer">តម្រូវលេខសម្ងាត់</CardTitle>
+                        </CardHeader>
+                        <CardContent className="text-center space-y-3">
+                            <p className="text-muted-foreground font-khmer">សូមត្រឡប់ទៅទំព័រ​ជ្រើសរើសមុខវិជ្ជា ដើម្បីបញ្ចូលលេខសម្ងាត់។</p>
+                            <div className="flex gap-2 justify-center">
+                                <Link href={`/subjects/${encodeURIComponent(provinceName)}`}>
+                                    <Button>{'ត្រឡប់ទៅមុខវិជ្ជា'}</Button>
+                                </Link>
+                                <a href="https://t.me/geipapp" target="_blank" rel="noopener noreferrer" className="inline-flex">
+                                    <Button variant="outline">Telegram @geipapp</Button>
+                                </a>
+                            </div>
+                        </CardContent>
+                    </Card>
+                </div>
+            );
+        }
+    } catch { }
+
     return (
         <div className="flex flex-col min-h-dvh bg-background text-foreground">
             {/* Header */}
-            <header className="bg-card border-b border-border shadow-sm">
+            <header className="bg-white/90 backdrop-blur border-b border-border">
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex items-center justify-between h-20">
                         <div className="flex items-center space-x-2 sm:space-x-4">
@@ -161,21 +192,19 @@ export default function ExamPage() {
             </header>
 
             {/* Exam Info */}
-            <div className="bg-blue-50 border-b border-blue-200">
+            <div className="bg-blue-50/60 border-b border-blue-200">
                 <div className="container mx-auto px-4 py-4">
                     <div className="text-center">
-                        <h1 className="text-2xl font-bold text-blue-900 mb-2 flex items-center justify-center gap-3">
+                        <h1 className="text-xl sm:text-2xl font-bold text-blue-900 mb-2 flex items-center justify-center gap-3">
                             <span>ប្រឡងតេស្ត {subject.name_km}</span>
                             <Badge variant="secondary" className="text-sm">
                                 ពិន្ទុអតិបរមា: {subject.score_km}
                             </Badge>
                         </h1>
-                        <p className="text-blue-700">
+                        <p className="text-blue-700 text-sm sm:text-base">
                             ខេត្ត: {province.name_km} ({province.name})
                         </p>
-                        <p className="text-blue-600 text-sm mt-1">
-                            មុខវិជ្ជា: {subject.name}
-                        </p>
+                        <p className="hidden sm:block text-blue-600 text-sm mt-1">មុខវិជ្ជា: {subject.name}</p>
                     </div>
                 </div>
             </div>
@@ -244,33 +273,36 @@ export default function ExamPage() {
                             <Card className="shadow-lg border-0 bg-white h-full">
                                 <CardContent className="p-0">
                                     {/* Toolbar */}
-                                    <div className="flex items-center justify-between px-3 py-2 border-b bg-gray-50">
+                                    <div className="sticky top-0 z-10 flex items-center justify-between px-3 py-2 border-b bg-gray-50">
                                         <div className="text-sm text-gray-600 font-khmer">
                                             ប្រសិនបើអក្សរតូច សូមពង្រីក ឬបើកក្នុងផ្ទាំងថ្មី
                                         </div>
                                         <div className="flex items-center gap-1">
-                                            <Button variant="outline" size="sm" onClick={handleZoomOut} title="បង្រួម">
+                                            <Button variant="outline" size="sm" className="min-w-9" onClick={handleZoomOut} title="បង្រួម">
                                                 <ZoomOut className="h-4 w-4" />
                                             </Button>
-                                            <Button variant="outline" size="sm" onClick={handleZoomReset} title="កំណត់ឡើងវិញ">
+                                            <Button variant="outline" size="sm" className="min-w-12" onClick={handleZoomReset} title="កំណត់ឡើងវិញ">
                                                 {Math.round(zoomLevel * 100)}%
                                             </Button>
-                                            <Button variant="outline" size="sm" onClick={handleZoomIn} title="ពង្រីក">
+                                            <Button variant="outline" size="sm" className="min-w-9" onClick={handleZoomIn} title="ពង្រីក">
                                                 <ZoomIn className="h-4 w-4" />
                                             </Button>
-                                            <Button variant="outline" size="sm" onClick={handleReload} title="ផ្ទុកឡើងវិញ">
+                                            <Button variant="outline" size="sm" className="min-w-9" onClick={handleReload} title="ផ្ទុកឡើងវិញ">
                                                 <RotateCw className="h-4 w-4" />
                                             </Button>
-                                            <Button variant="outline" size="sm" onClick={toggleFullscreen} title="ពេញអេក្រង់">
+                                            <Button variant="outline" size="sm" className="min-w-9" onClick={toggleFullscreen} title="ពេញអេក្រង់">
                                                 {isFullscreen ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
                                             </Button>
-                                            <Button variant="default" size="sm" onClick={openInNewTab} title="បើកក្នុងផ្ទាំងថ្មី">
+                                            <Button variant="default" size="sm" className="min-w-9" onClick={openInNewTab} title="បើកក្នុងផ្ទាំងថ្មី">
                                                 <ExternalLink className="h-4 w-4" />
+                                            </Button>
+                                            <Button variant="outline" size="sm" className="min-w-9" onClick={() => setIsTall((t) => !t)} title="បម្លែងកម្ពស់">
+                                                <ArrowUpDown className="h-4 w-4" />
                                             </Button>
                                         </div>
                                     </div>
 
-                                    <div ref={containerRef} className="w-full h-[calc(100vh-450px)] min-h-[600px] relative bg-white">
+                                    <div ref={containerRef} className="w-full relative bg-white" style={containerStyle}>
                                         {/* Loading State */}
                                         {!iframeLoaded && !iframeError && (
                                             <div className="absolute inset-0 flex items-center justify-center bg-gray-50 rounded-lg">

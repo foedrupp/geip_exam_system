@@ -6,6 +6,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { ArrowLeft, Home, Calculator, Atom, BookOpen, ExternalLink, Clock, Trophy } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { provinces, subjects, googleFormLinks } from '@/data/moeys-data';
@@ -14,6 +16,16 @@ export default function SubjectsPage() {
     const params = useParams();
     const router = useRouter();
     const [isLoading, setIsLoading] = useState<string | null>(null);
+    const [passOpen, setPassOpen] = useState(false);
+    const [passInput, setPassInput] = useState('');
+    const [passError, setPassError] = useState<string | null>(null);
+    const [selectedSubject, setSelectedSubject] = useState<string | null>(null);
+
+    const subjectPasscodes: Record<string, string> = {
+        'Khmer Language': '1808',
+        'Mathematics': '0818',
+        'Physics': '1308',
+    };
 
     const provinceName = decodeURIComponent(params.province as string);
     const province = provinces.find(p => p.name === provinceName);
@@ -36,10 +48,30 @@ export default function SubjectsPage() {
         const googleFormLink = googleFormLinks[linkKey];
 
         if (googleFormLink) {
-            // Navigate to the exam page with the Google Form
-            router.push(`/exam/${encodeURIComponent(province.name)}/${encodeURIComponent(subjectName)}`);
+            setSelectedSubject(subjectName);
+            setPassInput('');
+            setPassError(null);
+            setPassOpen(true);
         } else {
-            alert('Google Form link is not available yet. Please contact administrator.');
+            alert('តំណភ្ជាប់ទម្រង់ Google មិនទាន់មានទេ។ សូមទាក់ទងអ្នកគ្រប់គ្រង។');
+        }
+    };
+
+    const handleConfirmPasscode = () => {
+        const expected = selectedSubject ? subjectPasscodes[selectedSubject] : undefined;
+        if (!/^\d{4}$/.test(passInput)) {
+            setPassError('លេខសម្ងាត់ត្រូវមាន ៤ ខ្ទង់');
+            return;
+        }
+        if (expected && passInput === expected && selectedSubject) {
+            const key = `exam_pass_${province.name}_${selectedSubject}`;
+            try {
+                localStorage.setItem(key, 'ok');
+            } catch { }
+            setPassOpen(false);
+            router.push(`/exam/${encodeURIComponent(province.name)}/${encodeURIComponent(selectedSubject)}`);
+        } else {
+            setPassError('លេខសម្ងាត់មិនត្រឹមត្រូវ។ សូមព្យាយាមម្ដងទៀត ឬទាក់ទង Telegram @geipapp');
         }
     };
 
@@ -134,7 +166,7 @@ export default function SubjectsPage() {
                                     return (
                                         <Card
                                             key={subject.name}
-                                            className={`transition-all duration-300 transform hover:scale-105 cursor-pointer ${getSubjectColor(subject.name)} ${hasLink ? 'hover:shadow-lg' : 'opacity-60'
+                                            className={`transition-all duration-300 transform sm:hover:scale-105 cursor-pointer ${getSubjectColor(subject.name)} ${hasLink ? 'hover:shadow-lg' : 'opacity-60'
                                                 }`}
                                             onClick={() => hasLink && handleSubjectClick(subject.name)}
                                         >
@@ -144,10 +176,10 @@ export default function SubjectsPage() {
                                                         {getSubjectIcon(subject.name)}
                                                     </div>
                                                 </div>
-                                                <h3 className="text-lg sm:text-xl font-bold text-foreground mb-2">
+                                                <h3 className="text-lg sm:text-xl font-bold text-foreground mb-1 sm:mb-2">
                                                     {subject.name_km}
                                                 </h3>
-                                                <p className="text-sm sm:text-base text-muted-foreground mb-4">
+                                                <p className="hidden sm:block text-sm sm:text-base text-muted-foreground mb-4">
                                                     {subject.name}
                                                 </p>
                                                 <div className="flex items-center justify-center gap-2 mb-4">
@@ -207,6 +239,41 @@ export default function SubjectsPage() {
                             </div>
                         </CardContent>
                     </Card>
+                    {/* Passcode Dialog */}
+                    <Dialog open={passOpen} onOpenChange={setPassOpen}>
+                        <DialogContent>
+                            <DialogHeader>
+                                <DialogTitle className="font-khmer">បញ្ចូលលេខសម្ងាត់ (៤ ខ្ទង់)</DialogTitle>
+                                <DialogDescription className="font-khmer">សូមបញ្ចូលលេខសម្ងាត់ដើម្បីចូលប្រឡងតេស្ត</DialogDescription>
+                            </DialogHeader>
+                            <div className="space-y-2">
+                                <Input
+                                    type="tel"
+                                    inputMode="numeric"
+                                    pattern="\\d{4}"
+                                    maxLength={4}
+                                    placeholder="••••"
+                                    value={passInput}
+                                    onChange={(e) => {
+                                        setPassInput(e.target.value.replace(/[^0-9]/g, ''));
+                                        setPassError(null);
+                                    }}
+                                    autoFocus
+                                    autoComplete="one-time-code"
+                                    enterKeyHint="done"
+                                    className="text-center text-3xl sm:text-2xl tracking-widest py-4"
+                                    aria-label="Passcode"
+                                />
+                                {passError && (
+                                    <p className="text-sm text-red-600 font-khmer">{passError} <a href="https://t.me/geipapp" target="_blank" rel="noopener noreferrer" className="underline">@geipapp</a></p>
+                                )}
+                            </div>
+                            <DialogFooter>
+                                <Button variant="outline" onClick={() => setPassOpen(false)} className="font-khmer">បោះបង់</Button>
+                                <Button onClick={handleConfirmPasscode} className="font-khmer">បន្ត</Button>
+                            </DialogFooter>
+                        </DialogContent>
+                    </Dialog>
                 </div>
             </main>
 
