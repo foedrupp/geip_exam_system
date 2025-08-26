@@ -22,9 +22,9 @@ export default function SubjectsPage() {
     const [selectedSubject, setSelectedSubject] = useState<string | null>(null);
 
     const subjectPasscodes: Record<string, string> = {
-        'Khmer Language': '1808',
-        'Mathematics': '0818',
-        'Physics': '1308',
+        'Khmer Language': '9012',
+        'Mathematics': '2109',
+        'Physics': '8102',
     };
 
     const provinceName = decodeURIComponent(params.province as string);
